@@ -6,8 +6,8 @@ export default (props) => {
   const [value, setValue] = useState('');
 
   const onSubmit = (e) => {
-    props.onSubmit(value);
     e.preventDefault();
+    props.onSubmit(value);
   };
 
   return (

@@ -4,48 +4,27 @@ import Todos from './component/Todos';
 import TodoInput from './component/TodoInput'
 import TodoFilters from './component/TodoFilters'
 
-import { sortByDate, sortByName } from '../sort'
+import { connect } from 'react-redux'
 
-export default class TodoList extends Component {
+class TodoList extends Component {
 
   constructor(props) {
     super(props);
 
     this.handleInputSubmit = this.handleInputSubmit.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
-
-    this.state = {
-      todos: []
-    }
   }
 
   handleInputSubmit(value) {
-    this.setState(state => ({
-      todos: [
-        ...state.todos, { date: new Date(), value }
-      ]
-    }))
+    this.props.addTodo(value)
   }
 
   handleFilterChange(value) {
-    let sorted;
-
-    if (value === 'name') {
-      sorted = this.state.todos.sort(sortByName);
-    }
-
-    if (value === 'date') {
-      sorted = this.state.todos.sort(sortByDate);
-    }
-
-    this.setState({
-      todos: sorted
-    })
+    this.props.sortTodo(value)
   }
 
   render() {
-    const { todos } = this.state;
-
+    const todos  = this.props.todos;
     return (
       <div>
         <TodoFilters onChange={this.handleFilterChange} />
@@ -55,3 +34,24 @@ export default class TodoList extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    todos: state.todos
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTodo: (value) => dispatch({
+      type: 'ADD_TODO',
+      value: value
+    }),
+    sortTodo: (sort) => dispatch({
+      type: 'SORT_TODO',
+      sort
+    })
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList)
